@@ -30,6 +30,7 @@
             $("#send").click(() => {
                 socket.emit("Client-send-data", $("#original").val());
                 $("#original").val('');
+                socket.emit("Client-typing-data", '');
             });
             $("#original").on("input", () => {
                 if ($("#original").val()) {
