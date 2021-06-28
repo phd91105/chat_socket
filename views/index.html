@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <script src="assets/js/jquery-3.6.0.min.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <div id="mainForm" class="container mt-5">
+        <div id="content-chat"></div>
+        <div id="typing"></div>
+        <div class="form-group">
+            <input id="original" type="text" class="form-control" />
+        </div>
+        <button id="send" class="btn btn-primary mt-2">Send</button>
+    </div>
+    <script>
+        var socket = io();
+        socket.on("Server-send-data", (data) => {
+            $("#content-chat").append(`<div>${data}</div>`);
+        })
+        socket.on("Server-typing-data", (data) => {
+            $("#typing").html(`${data}`);
+        })
+        $(document).ready(() => {
+            $("#send").click(() => {
+                socket.emit("Client-send-data", $("#original").val());
+                $("#original").val('');
+            });
+            $("#original").on("input", () => {
+                if ($("#original").val()) {
+                    socket.emit("Client-typing-data", `${socket.id} is typing`);
+                }
+                else {
+                    socket.emit("Client-typing-data", '');
+                }
+            })
+        })
+    </script>
+    <script src="assets/js/main.min.js"></script>
+</body>
+
+</html>
